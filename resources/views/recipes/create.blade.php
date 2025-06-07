@@ -17,6 +17,15 @@
             <label>Apraksts:</label>
             <textarea name="description" required></textarea>
         </div>
+        <div>
+            <label>Kategorija:</label>
+            <select name="category_id" required>
+                <option value="">-- Izvēlies kategoriju --</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+            </select>
+        </div>
         <button type="submit">Saglabāt</button>
     </form>
 </div>

@@ -16,7 +16,8 @@ class RecipeController extends Controller
 
     public function create()
     {
-        return view('recipes.create');
+        $categories = \App\Models\Category::all();
+        return view('recipes.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -25,6 +26,7 @@ class RecipeController extends Controller
             'title' => 'required',
             'ingredients' => 'required',
             'description' => 'required',
+            'category_id' => 'required|exists:categories,id',
         ]);
 
         $validated['user_id'] = Auth::id();
