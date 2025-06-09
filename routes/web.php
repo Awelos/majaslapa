@@ -18,12 +18,15 @@ Route::middleware(['web', SetLocale::class])->group(function () {
         return view('dashboard');
     })->middleware(['auth', 'verified'])->name('dashboard');
 
+    Route::get('/all-recipes', [RecipeController::class, 'allRecipes'])->name('recipes.all');
+
     Route::middleware('auth')->group(function () {
         Route::resource('recipes', RecipeController::class);
         Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     });
 
     Route::middleware(['auth', IsAdmin::class])
@@ -43,4 +46,3 @@ Route::middleware(['web', SetLocale::class])->group(function () {
 
     require __DIR__.'/auth.php';
 });
-

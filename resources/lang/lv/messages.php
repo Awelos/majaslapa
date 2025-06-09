@@ -41,6 +41,11 @@ return [
     'no_tags' => 'Nav pievienotu tagu.',
     'login_to_comment' => 'Lai pievienotu komentāru, nepieciešams pieteikties.',
     'no_comments' => 'Nav neviena komentāra.',
-
+    'my_recipes' => 'Manas receptes',
+    'all_recipes' => 'Visas receptes',
+    'author' => 'Autors',
+    'unknown' => 'Nezināms',
+    'all_recipes' => 'Visas receptes',
+    'added' => 'Pievienots',
 
 ];

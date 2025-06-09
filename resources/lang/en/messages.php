@@ -41,6 +41,11 @@ return [
     'no_tags' => 'No tags added.',
     'login_to_comment' => 'You must be logged in to add a comment.',
     'no_comments' => 'No comments yet.',
-
+    'my_recipes' => 'My Recipes',
+    'all_recipes' => 'All Recipes',
+    'author' => 'Author',
+    'unknown' => 'Unknown',
+    'all_recipes' => 'All Recipes',
+    'added' => 'Added',
 
 ];

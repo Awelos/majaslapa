@@ -36,7 +36,7 @@
     <h1>{{ __('messages.welcome') }}</h1>
 
     <div class="links">
-        <a href="{{ route('recipes.index') }}">{{ __('messages.add_recipe') }}</a> |
+        <a href="{{ route('recipes.all') }}">{{ __('messages.add_recipe') }}</a> |
         <a href="{{ route('login') }}">{{ __('messages.login') }}</a> |
         <a href="{{ route('register') }}">{{ __('messages.register') }}</a>
     </div>

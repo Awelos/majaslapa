@@ -10,9 +10,20 @@ class RecipeController extends Controller
 {
     public function index()
     {
-        $recipes = Recipe::where('user_id', Auth::id())->get();
-        return view('recipes.index', compact('recipes'));
+        $recipes = Recipe::where('user_id', Auth::id())
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+        return view('recipes.index', ['recipes' => $recipes, 'personal' => true]);
     }
+
+    public function allRecipes()
+    {
+        $recipes = Recipe::orderBy('created_at', 'desc')->get();
+
+        return view('recipes.index', ['recipes' => $recipes, 'personal' => false]);
+    }
+
 
     public function create()
     {
