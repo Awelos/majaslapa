@@ -1,8 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Admin panelis</h1>
-    <p>Laipni lūdzam admin panelī! Šeit vari pārvaldīt receptes, komentārus u.c.</p>
-</div>
+    <h1>{{ __('messages.admin_dashboard') }}</h1>
+
+    <ul>
+        <li><a href="{{ route('admin.dashboard') }}">{{ __('messages.admin_panel') }}</a></li>
+        <li><a href="{{ route('recipes.index') }}">{{ __('messages.recipes_management') }}</a></li>
+        <li><a href="#">{{ __('messages.users') }}</a></li>
+    </ul>
 @endsection

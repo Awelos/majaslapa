@@ -1,0 +1,46 @@
+<?php
+
+return [
+    'welcome' => 'Laipni lūdzam Recepte Meklētājā!',
+    'add_recipe' => 'Skatīt receptes',
+    'login' => 'Pieslēgties',
+    'register' => 'Reģistrēties',
+    'dashboard' => 'Panelis',
+    'admin_dashboard' => 'Administratora panelis',
+    'profile' => 'Mans profils',
+    'logout' => 'Izrakstīties',
+    'site_title' => 'Recepšu meklētājs',
+    'site_name' => 'Mans recepšu portāls',
+    'home' => 'Sākums',
+    'recipes' => 'Receptes',
+    'add_new_recipe' => 'Pievienot jaunu recepti',
+    'edit_recipe' => 'Rediģēt recepti',
+    'recipe_title' => 'Nosaukums',
+    'recipe_description' => 'Apraksts',
+    'recipe_ingredients' => 'Sastāvdaļas',
+    'recipe_instructions' => 'Pagatavošana',
+    'save' => 'Saglabāt',
+    'delete' => 'Dzēst',
+    'submit' => 'Iesniegt',
+    'created_at' => 'Izveidots',
+    'actions' => 'Darbības',
+    'view' => 'Skatīt',
+    'edit' => 'Rediģēt',
+    'no_recipes' => 'Nav pievienotu recepšu.',
+
+    'comments' => 'Komentāri',
+    'add_comment' => 'Pievienot komentāru',
+    'your_comment' => 'Tavs komentārs',
+
+    'admin_panel' => 'Admin Panelis',
+    'users' => 'Lietotāji',
+    'recipes_management' => 'Recepšu pārvaldība',
+    'recipe_category' => 'Kategorija',
+    'recipe_tags' => 'Tagi',
+    'choose_category' => '-- Izvēlies kategoriju --',
+    'no_tags' => 'Nav pievienotu tagu.',
+    'login_to_comment' => 'Lai pievienotu komentāru, nepieciešams pieteikties.',
+    'no_comments' => 'Nav neviena komentāra.',
+
+
+];

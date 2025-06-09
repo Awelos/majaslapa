@@ -1,0 +1,46 @@
+<?php
+
+return [
+    'welcome' => 'Welcome to Recipe Finder!',
+    'add_recipe' => 'View Recipes',
+    'login' => 'Login',
+    'register' => 'Register',
+    'dashboard' => 'Dashboard',
+    'admin_dashboard' => 'Admin Dashboard',
+    'profile' => 'My Profile',
+    'logout' => 'Logout',
+    'site_title' => 'Recipe Finder',
+    'site_name' => 'My Recipe Portal',
+    'home' => 'Home',
+    'recipes' => 'Recipes',
+    'add_new_recipe' => 'Add New Recipe',
+    'edit_recipe' => 'Edit Recipe',
+    'recipe_title' => 'Title',
+    'recipe_description' => 'Description',
+    'recipe_ingredients' => 'Ingredients',
+    'recipe_instructions' => 'Instructions',
+    'save' => 'Save',
+    'delete' => 'Delete',
+    'submit' => 'Submit',
+    'created_at' => 'Created at',
+    'actions' => 'Actions',
+    'view' => 'View',
+    'edit' => 'Edit',
+    'no_recipes' => 'No recipes added yet.',
+
+    'comments' => 'Comments',
+    'add_comment' => 'Add Comment',
+    'your_comment' => 'Your Comment',
+
+    'admin_panel' => 'Admin Panel',
+    'users' => 'Users',
+    'recipes_management' => 'Manage Recipes',
+    'recipe_category' => 'Category',
+    'recipe_tags' => 'Tags',
+    'choose_category' => '-- Choose category --',
+    'no_tags' => 'No tags added.',
+    'login_to_comment' => 'You must be logged in to add a comment.',
+    'no_comments' => 'No comments yet.',
+
+
+];
