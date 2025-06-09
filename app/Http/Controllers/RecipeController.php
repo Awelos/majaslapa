@@ -17,7 +17,9 @@ class RecipeController extends Controller
     public function create()
     {
         $categories = \App\Models\Category::all();
-        return view('recipes.create', compact('categories'));
+        $tags = \App\Models\Tag::all();
+
+        return view('recipes.create', compact('categories', 'tags'));
     }
 
     public function store(Request $request)
@@ -27,13 +29,18 @@ class RecipeController extends Controller
             'ingredients' => 'required',
             'description' => 'required',
             'category_id' => 'required|exists:categories,id',
+            'tags' => 'array',
+            'tags.*' => 'exists:tags,id',
         ]);
 
         $validated['user_id'] = Auth::id();
-        Recipe::create($validated);
+        $recipe = Recipe::create($validated);
+
+        $recipe->tags()->sync($request->input('tags', []));
 
         return redirect()->route('recipes.index')->with('success', 'Recepte pievienota!');
     }
+
 
     public function show(Recipe $recipe)
     {

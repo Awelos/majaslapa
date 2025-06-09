@@ -8,6 +8,20 @@
 
     <hr>
 
+    {{-- Tagi --}}
+    <h4>Tagi:</h4>
+    @if ($recipe->tags->isNotEmpty())
+        <ul>
+            @foreach ($recipe->tags as $tag)
+                <li>{{ $tag->name }}</li>
+            @endforeach
+        </ul>
+    @else
+        <p>Nav pievienotu tagu.</p>
+    @endif
+
+    <hr>
+
     {{-- Komentāri --}}
     <h4>Pievienot komentāru:</h4>
     @auth
