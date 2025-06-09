@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,5 +22,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('recipes', RecipeController::class);
     Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
 });
+
+Route::middleware(['auth', IsAdmin::class])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    });
 
 require __DIR__.'/auth.php';
