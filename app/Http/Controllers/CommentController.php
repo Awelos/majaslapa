@@ -21,4 +21,16 @@ class CommentController extends Controller
 
         return redirect()->back()->with('success', 'Komentārs pievienots!');
     }
+    public function destroy(Comment $comment)
+    {
+        if (auth()->id() !== $comment->user_id && !auth()->user()->isAdmin()) {
+            return redirect()->back()->with('error', 'Nav atļaujas dzēst šo komentāru!');
+        }
+
+        $comment->delete();
+
+        return redirect()->route('admin.comments.index')->with('success', 'Komentārs veiksmīgi izdzēsts!');
+    }
+
+
 }

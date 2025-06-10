@@ -6,6 +6,6 @@
     <ul>
         <li><a href="{{ route('admin.dashboard') }}">{{ __('messages.admin_panel') }}</a></li>
         <li><a href="{{ route('recipes.index') }}">{{ __('messages.recipes_management') }}</a></li>
-        <li><a href="#">{{ __('messages.users') }}</a></li>
+        <li><a href="{{ route('admin.users.index') }}">{{ __('messages.users') }}</a></li>
     </ul>
 @endsection

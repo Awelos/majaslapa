@@ -46,6 +46,18 @@
             <strong>{{ $comment->user->name ?? 'Anonīms' }}:</strong>
             <p>{{ $comment->body }}</p>
             <small class="text-muted">{{ $comment->created_at->format('d.m.Y H:i') }}</small>
+
+            @auth
+                @if(auth()->user()->is_admin) {{-- vai cits admins pārbaudes veids --}}
+                    <form action="{{ route('admin.comments.destroy', $comment) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tiešām dzēst šo komentāru?')">
+                            {{ __('messages.delete_comment') }}
+                        </button>
+                    </form>
+                @endif
+            @endauth
         </div>
     @empty
         <p>{{ __('messages.no_comments') }}</p>

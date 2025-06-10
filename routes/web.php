@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\CommentController as AdminCommentController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\SetLocale;
 
@@ -34,6 +36,10 @@ Route::middleware(['web', SetLocale::class])->group(function () {
         ->name('admin.')
         ->group(function () {
             Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+            Route::get('/users', [UserController::class, 'index'])->name('users.index');
+            Route::get('/comments', [AdminCommentController::class, 'index'])->name('comments.index');
+            Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+            Route::delete('/comments/{comment}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
         });
 
     Route::get('lang/{locale}', function ($locale) {
