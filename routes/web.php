@@ -19,14 +19,14 @@ Route::middleware(['web', SetLocale::class])->group(function () {
     })->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::get('/all-recipes', [RecipeController::class, 'allRecipes'])->name('recipes.all');
+    Route::get('/recipes/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
 
     Route::middleware('auth')->group(function () {
-        Route::resource('recipes', RecipeController::class);
+        Route::resource('recipes', RecipeController::class)->except(['show']);
         Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
     });
 
     Route::middleware(['auth', IsAdmin::class])
