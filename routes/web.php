@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CommentController as AdminCommentController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\SetLocale;
+use App\Http\Controllers\ReviewController;
 
 Route::middleware(['web', SetLocale::class])->group(function () {
 
@@ -49,6 +50,10 @@ Route::middleware(['web', SetLocale::class])->group(function () {
         session(['locale' => $locale]);
         return redirect()->back();
     })->name('lang.switch');
+
+    Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
 
     require __DIR__.'/auth.php';
 });
