@@ -47,5 +47,13 @@ return [
     'unknown' => 'Nezināms',
     'all_recipes' => 'Visas receptes',
     'added' => 'Pievienots',
-
+    'my_profile' => 'Mans profils',
+    'name' => 'Vārds',
+    'email' => 'E-pasts',
+    'new_password' => 'Jauna parole',
+    'confirm_password' => 'Apstiprināt paroli',
+    'optional' => 'nav obligāta',
+    'save' => 'Saglabāt',
+    'delete_profile' => 'Dzēst profilu',
+    'confirm_password_to_delete' => 'Apstiprini paroli, lai dzēstu profilu',
 ];

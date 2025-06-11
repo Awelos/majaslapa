@@ -99,7 +99,7 @@
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
-
+                <a href="{{ route('profile.edit') }}">Mans profils</a>
                 <a href="{{ route('reviews.index') }}">
                     {{ __('User Reviews') }}
                 </a>

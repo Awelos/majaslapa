@@ -1,29 +1,56 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@section('content')
+<div class="container">
+    <h2>{{ __('messages.my_profile') }}</h2>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
+    {{-- Update Profile Form --}}
+    <form method="POST" action="{{ route('profile.update') }}">
+        @csrf
+        @method('PATCH')
+
+        <div class="mb-3">
+            <label for="name">{{ __('messages.name') }}</label>
+            <input type="text" name="name" value="{{ old('name', $user->name) }}" required class="form-control">
         </div>
-    </div>
-</x-app-layout>
+
+        <div class="mb-3">
+            <label for="email">{{ __('messages.email') }}</label>
+            <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="password">{{ __('messages.new_password') }} ({{ __('messages.optional') }})</label>
+            <input type="password" name="password" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="password_confirmation">{{ __('messages.confirm_password') }}</label>
+            <input type="password" name="password_confirmation" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">{{ __('messages.save') }}</button>
+    </form>
+
+    <hr>
+
+    {{-- Delete Profile Form --}}
+    <form method="POST" action="{{ route('profile.destroy') }}">
+        @csrf
+        @method('DELETE')
+
+        <div class="mb-3">
+            <label for="password">{{ __('messages.confirm_password_to_delete') }}</label>
+            <input id="password" type="password" name="password" required class="form-control mt-2">
+        </div>
+
+        <button type="submit" class="btn btn-danger mt-3">
+            {{ __('messages.delete_profile') }}
+        </button>
+    </form>
+</div>
+@endsection
