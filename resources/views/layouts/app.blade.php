@@ -102,6 +102,9 @@
                 <a href="{{ route('reviews.index') }}">
                     {{ __('User Reviews') }}
                 </a>
+                <a href="{{ route('recipes.recommended') }}" class="btn btn-outline-success">
+                        {{ __('Recommended for You') }}
+                </a>
             @endauth
 
             @guest

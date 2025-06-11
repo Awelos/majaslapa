@@ -22,7 +22,7 @@ Route::middleware(['web', SetLocale::class])->group(function () {
     })->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::get('/all-recipes', [RecipeController::class, 'allRecipes'])->name('recipes.all');
-    Route::get('/recipes/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
+
 
     Route::middleware('auth')->group(function () {
         Route::resource('recipes', RecipeController::class)->except(['show']);
@@ -31,7 +31,8 @@ Route::middleware(['web', SetLocale::class])->group(function () {
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
-
+    Route::get('/recipes/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
+    Route::get('/recommended-recipes', [RecipeController::class, 'recommended'])->name('recipes.recommended');
     Route::middleware(['auth', IsAdmin::class])
         ->prefix('admin')
         ->name('admin.')
@@ -42,7 +43,6 @@ Route::middleware(['web', SetLocale::class])->group(function () {
             Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
             Route::delete('/comments/{comment}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
         });
-
     Route::get('lang/{locale}', function ($locale) {
         if (! in_array($locale, ['lv', 'en'])) {
             abort(400);

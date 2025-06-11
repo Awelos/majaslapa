@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\WeatherService;
 
 class RecipeController extends Controller
 {
@@ -33,6 +34,35 @@ class RecipeController extends Controller
         return view('recipes.create', compact('categories', 'tags'));
     }
 
+public function recommended(WeatherService $weatherService)
+{
+    $weather = $weatherService->getCurrentWeather();
+
+    if (!$weather) {
+        return redirect()->route('recipes.index')->with('error', 'Unable to fetch weather data.');
+    }
+
+    $temp = $weather['main']['temp'];
+    $weatherCondition = $weather['weather'][0]['main'];
+
+    $tagQuery = \App\Models\Tag::query();
+
+    if ($temp < 10) {
+        $tagQuery->where('name', 'like', '%soup%');
+    } elseif ($weatherCondition === 'Rain') {
+        $tagQuery->where('name', 'like', '%comfort%');
+    } else {
+        $tagQuery->where('name', 'like', '%salad%');
+    }
+
+    $tags = $tagQuery->pluck('id');
+
+    $recipes = \App\Models\Recipe::whereHas('tags', function ($query) use ($tags) {
+        $query->whereIn('tags.id', $tags);
+    })->with('tags')->latest()->limit(10)->get();
+
+    return view('recipes.recommended', compact('recipes', 'weather'));
+}
     public function store(Request $request)
     {
         $validated = $request->validate([
