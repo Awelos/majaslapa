@@ -21,7 +21,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = $request->user();
-        $original = $user->only(['name', 'email']); // Capture original values
+        $original = $user->only(['name', 'email']);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -49,7 +49,7 @@ class ProfileController extends Controller
 
         $user->save();
 
-        // Audit Log
+
         if (!empty($changes)) {
             AuditLog::create([
                 'user_id' => $user->id,
@@ -72,7 +72,7 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        // Audit log before deleting
+ 
         AuditLog::create([
             'user_id' => $user->id,
             'action' => 'profile_deleted',

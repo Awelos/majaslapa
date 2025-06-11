@@ -80,7 +80,12 @@ document.addEventListener('DOMContentLoaded', function () {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
 
+
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+
             const formData = new FormData(form);
+
             fetch("{{ route('comments.store') }}", {
                 method: 'POST',
                 headers: {
@@ -94,11 +99,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 return response.json();
             })
             .then(data => {
-
                 const noComments = document.getElementById('no-comments');
                 if (noComments) noComments.remove();
 
-                
                 const commentsList = document.getElementById('comments-list');
                 const newComment = document.createElement('div');
                 newComment.classList.add('mb-3', 'comment-item');
@@ -109,12 +112,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
                 commentsList.appendChild(newComment);
 
-
                 form.body.value = '';
             })
             .catch(error => {
                 console.error(error);
                 alert('Neizdevās pievienot komentāru.');
+            })
+            .finally(() => {
+                submitButton.disabled = false;
             });
         });
     }

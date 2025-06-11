@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AuditLog;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CommentNotification;
 
 class CommentController extends Controller
 {
@@ -17,10 +19,16 @@ class CommentController extends Controller
         ]);
 
         $validated['user_id'] = Auth::id();
+        
         $comment = Comment::create($validated);
-        $comment->load('user');
+        $comment->load(['user', 'recipe.user']);
 
-        // Audit log for comment creation
+        $recipeAuthor = $comment->recipe->user;
+
+        if ($recipeAuthor && $recipeAuthor->email !== Auth::user()->email) {
+            Mail::to($recipeAuthor->email)->send(new CommentNotification($comment));
+        }
+
         AuditLog::create([
             'user_id' => Auth::id(),
             'action' => 'comment_created',
@@ -57,7 +65,6 @@ class CommentController extends Controller
             return redirect()->back()->with('error', 'Nav atļaujas dzēst šo komentāru!');
         }
 
-        // Audit log for comment deletion
         AuditLog::create([
             'user_id' => auth()->id(),
             'action' => 'comment_deleted',
