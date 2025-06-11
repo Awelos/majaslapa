@@ -13,60 +13,103 @@ use Illuminate\Support\Facades\Storage;
 class RecipeController extends Controller
 {
     use AuthorizesRequests;
-    public function index()
-    {
-        $recipes = Recipe::where('user_id', Auth::id())
-                        ->orderBy('created_at', 'desc')
-                        ->get();
 
-        return view('recipes.index', ['recipes' => $recipes, 'personal' => true]);
+
+    public function index(Request $request)
+    {
+        $query = Recipe::where('user_id', Auth::id());
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('ingredients', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('tags')) {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->whereIn('name', $request->tags);
+            });
+        }
+
+        $recipes = $query->latest()->paginate(10);
+        $availableTags = Tag::all();
+
+        return view('recipes.index', [
+            'recipes' => $recipes,
+            'personal' => true,
+            'availableTags' => $availableTags,
+        ]);
     }
 
-    public function allRecipes()
+
+
+    public function allRecipes(Request $request)
     {
-        $recipes = Recipe::orderBy('created_at', 'desc')->get();
+        $query = Recipe::query();
 
-        return view('recipes.index', ['recipes' => $recipes, 'personal' => false]);
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('ingredients', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('tags')) {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->whereIn('name', $request->tags);
+            });
+        }
+
+        $availableTags = Tag::all();
+        $recipes = $query->latest()->paginate(10);
+
+        return view('recipes.index', [
+            'recipes' => $recipes,
+            'personal' => false,
+            'availableTags' => $availableTags,
+        ]);
     }
-
 
     public function create()
     {
         $categories = \App\Models\Category::all();
-        $tags = \App\Models\Tag::all();
+        $tags = Tag::all();
 
         return view('recipes.create', compact('categories', 'tags'));
     }
 
-public function recommended(WeatherService $weatherService)
-{
-    $weather = $weatherService->getCurrentWeather();
+    public function recommended(WeatherService $weatherService)
+    {
+        $weather = $weatherService->getCurrentWeather();
 
-    if (!$weather) {
-        return redirect()->route('recipes.index')->with('error', 'Unable to fetch weather data.');
+        if (!$weather) {
+            return redirect()->route('recipes.index')->with('error', 'Unable to fetch weather data.');
+        }
+
+        $temp = $weather['main']['temp'];
+        $weatherCondition = $weather['weather'][0]['main'];
+
+        $tagQuery = Tag::query();
+
+        if ($temp < 10) {
+            $tagQuery->where('name', 'like', '%soup%');
+        } elseif ($weatherCondition === 'Rain') {
+            $tagQuery->where('name', 'like', '%comfort%');
+        } else {
+            $tagQuery->where('name', 'like', '%salad%');
+        }
+
+        $tags = $tagQuery->pluck('id');
+
+        $recipes = Recipe::whereHas('tags', function ($query) use ($tags) {
+            $query->whereIn('tags.id', $tags);
+        })->with('tags')->latest()->limit(10)->get();
+
+        return view('recipes.recommended', compact('recipes', 'weather'));
     }
-
-    $temp = $weather['main']['temp'];
-    $weatherCondition = $weather['weather'][0]['main'];
-
-    $tagQuery = \App\Models\Tag::query();
-
-    if ($temp < 10) {
-        $tagQuery->where('name', 'like', '%soup%');
-    } elseif ($weatherCondition === 'Rain') {
-        $tagQuery->where('name', 'like', '%comfort%');
-    } else {
-        $tagQuery->where('name', 'like', '%salad%');
-    }
-
-    $tags = $tagQuery->pluck('id');
-
-    $recipes = \App\Models\Recipe::whereHas('tags', function ($query) use ($tags) {
-        $query->whereIn('tags.id', $tags);
-    })->with('tags')->latest()->limit(10)->get();
-
-    return view('recipes.recommended', compact('recipes', 'weather'));
-}
 
     public function store(Request $request)
     {
@@ -80,7 +123,6 @@ public function recommended(WeatherService $weatherService)
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('recipes', 'public');
         }
@@ -92,7 +134,6 @@ public function recommended(WeatherService $weatherService)
 
         return redirect()->route('recipes.index')->with('success', 'Recepte pievienota!');
     }
-
 
     public function show(Recipe $recipe)
     {
@@ -117,7 +158,6 @@ public function recommended(WeatherService $weatherService)
             'image' => 'nullable|image|max:2048',
         ]);
 
-
         if ($request->hasFile('image')) {
             if ($recipe->image) {
                 Storage::delete('public/' . $recipe->image);
@@ -130,7 +170,6 @@ public function recommended(WeatherService $weatherService)
         $recipe->ingredients = $request->ingredients;
         $recipe->description = $request->description;
         $recipe->save();
-
 
         $recipe->tags()->sync($request->tags ?? []);
 

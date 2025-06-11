@@ -17,11 +17,14 @@ Route::middleware(['web', SetLocale::class])->group(function () {
         return view('welcome');
     })->name('welcome');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/all-recipes', function () {
+        return view('all-recipes');
+    })->middleware(['auth', 'verified'])->name('all-recipes');
 
     Route::get('/all-recipes', [RecipeController::class, 'allRecipes'])->name('recipes.all');
+
+    Route::get('/my-recipes', [RecipeController::class, 'index'])->name('my-recipes')->middleware('auth');
+    Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 
 
     Route::middleware('auth')->group(function () {
