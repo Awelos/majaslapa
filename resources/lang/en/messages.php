@@ -47,5 +47,8 @@ return [
     'unknown' => 'Unknown',
     'all_recipes' => 'All Recipes',
     'added' => 'Added',
+    'edit' => 'Edit',
+    'delete' => 'Delete',
+    'confirm_delete' => 'Are you sure you want to delete this recipe?',
 
 ];

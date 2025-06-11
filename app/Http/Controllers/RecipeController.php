@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Recipe;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\WeatherService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Storage;
 
 class RecipeController extends Controller
 {
+    use AuthorizesRequests;
     public function index()
     {
         $recipes = Recipe::where('user_id', Auth::id())
@@ -95,9 +99,48 @@ public function recommended(WeatherService $weatherService)
         return view('recipes.show', compact('recipe'));
     }
 
-    public function edit(Recipe $recipe) { /* vēlāk */ }
+    public function edit(Recipe $recipe)
+    {
+        $this->authorize('update', $recipe);
+        $allTags = Tag::all();
+        return view('recipes.edit', compact('recipe', 'allTags'));
+    }
 
-    public function update(Request $request, Recipe $recipe) { /* vēlāk */ }
+    public function update(Request $request, Recipe $recipe)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'ingredients' => 'required|string',
+            'description' => 'required|string',
+            'tags' => 'array',
+            'tags.*' => 'exists:tags,id',
+            'image' => 'nullable|image|max:2048',
+        ]);
 
-    public function destroy(Recipe $recipe) { /* vēlāk */ }
+
+        if ($request->hasFile('image')) {
+            if ($recipe->image) {
+                Storage::delete('public/' . $recipe->image);
+            }
+            $path = $request->file('image')->store('recipes', 'public');
+            $recipe->image = $path;
+        }
+
+        $recipe->title = $request->title;
+        $recipe->ingredients = $request->ingredients;
+        $recipe->description = $request->description;
+        $recipe->save();
+
+
+        $recipe->tags()->sync($request->tags ?? []);
+
+        return redirect()->route('recipes.show', $recipe)->with('success', 'Recepte atjaunināta!');
+    }
+
+    public function destroy(Recipe $recipe)
+    {
+        $this->authorize('delete', $recipe);
+        $recipe->delete();
+        return redirect()->route('recipes.index')->with('success', __('Recipe deleted.'));
+    }
 }

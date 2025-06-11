@@ -29,6 +29,18 @@
     @endif
 
     <hr>
+        <a href="{{ route('recipes.edit', $recipe) }}">Rediģēt</a>
+        @can('delete', $recipe)
+        <form action="{{ route('recipes.destroy', $recipe) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('messages.confirm_delete') }}')">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger">
+                {{ __('messages.delete') }}
+            </button>
+        </form>
+    @endcan
+
+    <hr>
 
 {{-- Komentāru forma --}}
 <h4>{{ __('messages.add_comment') }}:</h4>

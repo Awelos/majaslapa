@@ -9,7 +9,10 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    public function recipes()
+    {
+        return $this->hasMany(Recipe::class);
+    }
     use HasFactory, Notifiable;
 
     /**
