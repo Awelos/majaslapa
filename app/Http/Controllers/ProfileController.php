@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\AuditLog;
 
 class ProfileController extends Controller
 {
-
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -21,6 +21,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = $request->user();
+        $original = $user->only(['name', 'email']); // Capture original values
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -28,33 +29,65 @@ class ProfileController extends Controller
             'password' => 'nullable|string|min:6|confirmed',
         ]);
 
+        $changes = [];
+
+        if ($user->name !== $validated['name']) {
+            $changes['name'] = ['old' => $user->name, 'new' => $validated['name']];
+        }
+
+        if ($user->email !== $validated['email']) {
+            $changes['email'] = ['old' => $user->email, 'new' => $validated['email']];
+        }
+
         $user->name = $validated['name'];
         $user->email = $validated['email'];
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
+            $changes['password'] = ['old' => '********', 'new' => '********'];
         }
 
         $user->save();
 
+        // Audit Log
+        if (!empty($changes)) {
+            AuditLog::create([
+                'user_id' => $user->id,
+                'action' => 'profile_updated',
+                'model_type' => get_class($user),
+                'model_id' => $user->id,
+                'old_values' => collect($original)->only(array_keys($changes)),
+                'new_values' => collect($user->only(array_keys($changes))),
+            ]);
+        }
+
         return redirect()->route('profile.edit')->with('success', 'Profils veiksmīgi atjaunināts!');
     }
 
-        public function destroy(Request $request)
-        {
-            $request->validate([
-                'password' => ['required', 'current_password'],
-            ]);
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        ]);
 
-            $user = $request->user();
+        $user = $request->user();
 
-            Auth::logout();
-            $user->delete();
+        // Audit log before deleting
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'profile_deleted',
+            'model_type' => get_class($user),
+            'model_id' => $user->id,
+            'old_values' => $user->only(['name', 'email']),
+            'new_values' => null,
+        ]);
 
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+        Auth::logout();
+        $user->delete();
 
-            return redirect('/')->with('success', 'Jūsu profils tika veiksmīgi dzēsts.');
-        }
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/')->with('success', 'Jūsu profils tika veiksmīgi dzēsts.');
+    }
 }
-

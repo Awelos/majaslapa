@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Comment;
 use Illuminate\Support\Facades\Auth;
+use App\Models\AuditLog;
 
 class CommentController extends Controller
 {
@@ -18,6 +19,19 @@ class CommentController extends Controller
         $validated['user_id'] = Auth::id();
         $comment = Comment::create($validated);
         $comment->load('user');
+
+        // Audit log for comment creation
+        AuditLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'comment_created',
+            'model_type' => Comment::class,
+            'model_id' => $comment->id,
+            'old_values' => null,
+            'new_values' => [
+                'recipe_id' => $comment->recipe_id,
+                'body' => $comment->body,
+            ],
+        ]);
 
         if ($request->ajax()) {
             return response()->json([
@@ -33,7 +47,7 @@ class CommentController extends Controller
             'created_at' => $comment->created_at,
             'user' => [
                 'name' => $comment->user->name ?? 'Anonīms',
-                ],
+            ],
         ]);
     }
 
@@ -42,6 +56,19 @@ class CommentController extends Controller
         if (auth()->id() !== $comment->user_id && !auth()->user()->isAdmin()) {
             return redirect()->back()->with('error', 'Nav atļaujas dzēst šo komentāru!');
         }
+
+        // Audit log for comment deletion
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'comment_deleted',
+            'model_type' => Comment::class,
+            'model_id' => $comment->id,
+            'old_values' => [
+                'recipe_id' => $comment->recipe_id,
+                'body' => $comment->body,
+            ],
+            'new_values' => null,
+        ]);
 
         $comment->delete();
 
