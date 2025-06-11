@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ __('messages.site_title') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -52,6 +54,10 @@
         nav span {
             margin-left: auto;
             font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
         }
 
         nav span a {
@@ -60,8 +66,8 @@
             padding: 5px 8px;
             border-radius: 3px;
             background-color: #34495e;
-            margin-left: 6px;
             transition: background-color 0.3s;
+            white-space: nowrap;
         }
 
         nav span a:hover {
@@ -78,6 +84,27 @@
             border-radius: 8px;
             min-height: 70vh;
         }
+
+        /* logout poga kā saite */
+        #logout-form {
+            margin: 0;
+        }
+        #logout-form button {
+            background: none;
+            border: none;
+            color: #ecf0f1;
+            font-weight: 500;
+            padding: 8px 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        #logout-form button:hover,
+        #logout-form button:focus {
+            background-color: #34495e;
+            color: #f39c12;
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -86,37 +113,43 @@
         <nav>
             <a href="{{ url('/') }}">{{ __('messages.home') }}</a>
             <a href="{{ route('recipes.index') }}">{{ __('messages.my_recipes') }}</a>
+
             @auth
                 <a href="{{ route('recipes.all') }}">{{ __('messages.all_recipes') }}</a>
                 @if(Auth::user()->is_admin)
                     <a href="{{ route('admin.dashboard') }}">{{ __('messages.admin_panel') }}</a>
                 @endif
-                <a href="{{ route('logout') }}"
-                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    {{ __('messages.logout') }}
+
+                <a href="{{ route('profile.edit') }}">Mans profils</a>
+                <a href="{{ route('reviews.index') }}">{{ __('User Reviews') }}</a>
+                <a href="{{ route('recipes.recommended') }}" class="btn btn-outline-success">
+                    {{ __('Recommended for You') }}
                 </a>
 
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-                <a href="{{ route('profile.edit') }}">Mans profils</a>
-                <a href="{{ route('reviews.index') }}">
-                    {{ __('User Reviews') }}
-                </a>
-                <a href="{{ route('recipes.recommended') }}" class="btn btn-outline-success">
-                        {{ __('Recommended for You') }}
-                </a>
+                <span>
+                    <!-- logout poga virs valodu izvēles -->
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit">{{ __('messages.logout') }}</button>
+                    </form>
+
+                    <div>
+                        <a href="{{ route('lang.switch', 'lv') }}">LV</a> | 
+                        <a href="{{ route('lang.switch', 'en') }}">EN</a>
+                    </div>
+                </span>
+
             @endauth
 
             @guest
                 <a href="{{ route('login') }}">{{ __('messages.login') }}</a>
                 <a href="{{ route('register') }}">{{ __('messages.register') }}</a>
-            @endguest
 
-            <span>
-                <a href="{{ route('lang.switch', 'lv') }}">LV</a> | 
-                <a href="{{ route('lang.switch', 'en') }}">EN</a>
-            </span>
+                <span>
+                    <a href="{{ route('lang.switch', 'lv') }}">LV</a> | 
+                    <a href="{{ route('lang.switch', 'en') }}">EN</a>
+                </span>
+            @endguest
         </nav>
     </header>
 

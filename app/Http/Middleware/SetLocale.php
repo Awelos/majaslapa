@@ -4,15 +4,15 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 
 class SetLocale
 {
     public function handle($request, Closure $next)
     {
-        $locale = substr($request->header('Accept-Language'), 0, 2);
+        $locale = session('locale', substr($request->header('Accept-Language'), 0, 2));
 
-        $supported = ['en', 'lv'];
-        if (!in_array($locale, $supported)) {
+        if (!in_array($locale, ['en', 'lv'])) {
             $locale = config('app.fallback_locale');
         }
 
