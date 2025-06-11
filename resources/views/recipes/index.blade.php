@@ -80,15 +80,21 @@
     @if ($recipes->isEmpty())
         <p>{{ __('messages.no_recipes') }}</p>
     @else
-        <ul class="recipe-list">
-            @foreach ($recipes as $recipe)
-                <li class="recipe-item">
-                    <a href="{{ route('recipes.show', $recipe) }}">
-                        {{ $recipe->title }}
-                    </a>
-                    <small>{{ __('messages.created_at') }}: {{ $recipe->created_at->format('Y-m-d H:i') }}</small>
-                </li>
-            @endforeach
+    @foreach ($recipes as $recipe)
+        <li class="recipe-item">
+            <a href="{{ route('recipes.show', $recipe) }}">
+                {{ $recipe->title }}
+            </a>
+
+            @if ($recipe->image)
+                <div>
+                    <img src="{{ asset('storage/' . $recipe->image) }}" alt="{{ $recipe->title }}" style="max-width: 200px;">
+                </div>
+            @endif
+
+            <small>{{ __('messages.created_at') }}: {{ $recipe->created_at->format('Y-m-d H:i') }}</small>
+        </li>
+    @endforeach
         </ul>
     @endif
 </div>

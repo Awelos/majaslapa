@@ -16,11 +16,27 @@ class CommentController extends Controller
         ]);
 
         $validated['user_id'] = Auth::id();
+        $comment = Comment::create($validated);
+        $comment->load('user');
 
-        Comment::create($validated);
+        if ($request->ajax()) {
+            return response()->json([
+                'body' => $comment->body,
+                'created_at' => $comment->created_at->toDateTimeString(),
+                'user' => ['name' => $comment->user->name ?? 'Anonīms']
+            ]);
+        }
 
-        return redirect()->back()->with('success', 'Komentārs pievienots!');
+        return response()->json([
+            'message' => 'Komentārs pievienots!',
+            'body' => $comment->body,
+            'created_at' => $comment->created_at,
+            'user' => [
+                'name' => $comment->user->name ?? 'Anonīms',
+                ],
+        ]);
     }
+
     public function destroy(Comment $comment)
     {
         if (auth()->id() !== $comment->user_id && !auth()->user()->isAdmin()) {
@@ -31,6 +47,4 @@ class CommentController extends Controller
 
         return redirect()->route('admin.comments.index')->with('success', 'Komentārs veiksmīgi izdzēsts!');
     }
-
-
 }

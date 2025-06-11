@@ -63,6 +63,7 @@ public function recommended(WeatherService $weatherService)
 
     return view('recipes.recommended', compact('recipes', 'weather'));
 }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -72,7 +73,13 @@ public function recommended(WeatherService $weatherService)
             'category_id' => 'required|exists:categories,id',
             'tags' => 'array',
             'tags.*' => 'exists:tags,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('recipes', 'public');
+        }
 
         $validated['user_id'] = Auth::id();
         $recipe = Recipe::create($validated);

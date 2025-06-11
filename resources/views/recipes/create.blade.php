@@ -4,7 +4,7 @@
 <div class="container">
     <h2>{{ __('messages.add_new_recipe') }}</h2>
 
-    <form action="{{ route('recipes.store') }}" method="POST">
+    <form action="{{ route('recipes.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div>
             <label>{{ __('messages.recipe_title') }}:</label>
@@ -41,7 +41,13 @@
             @endforeach
         </div>
 
+        <div class="form-group">
+            <label for="image">{{ __('Upload Image') }}</label>
+            <input type="file" class="form-control" name="image" id="image" accept="image/*">
+        </div>
+
         <button type="submit">{{ __('messages.save') }}</button>
     </form>
+
 </div>
 @endsection
