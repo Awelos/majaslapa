@@ -17,13 +17,15 @@ Route::middleware(['web', SetLocale::class])->group(function () {
         return view('welcome');
     })->name('welcome');
 
-    Route::get('/all-recipes', function () {
-        return view('all-recipes');
-    })->middleware(['auth', 'verified'])->name('all-recipes');
 
-    Route::get('/all-recipes', [RecipeController::class, 'allRecipes'])->name('recipes.all');
+    Route::get('/all-recipes', [RecipeController::class, 'allRecipes'])
+        ->middleware(['auth', 'verified'])
+        ->name('recipes.all');
 
-    Route::get('/my-recipes', [RecipeController::class, 'index'])->name('my-recipes')->middleware('auth');
+    Route::get('/my-recipes', [RecipeController::class, 'index'])
+        ->middleware('auth')
+        ->name('my-recipes');
+
     Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 
 
@@ -34,18 +36,24 @@ Route::middleware(['web', SetLocale::class])->group(function () {
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
+
     Route::get('/recipes/{recipe}', [RecipeController::class, 'show'])->name('recipes.show');
     Route::get('/recommended-recipes', [RecipeController::class, 'recommended'])->name('recipes.recommended');
+
+
     Route::middleware(['auth', IsAdmin::class])
         ->prefix('admin')
         ->name('admin.')
         ->group(function () {
             Route::get('/', [AdminController::class, 'index'])->name('dashboard');
             Route::get('/users', [UserController::class, 'index'])->name('users.index');
-            Route::get('/comments', [AdminCommentController::class, 'index'])->name('comments.index');
             Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+            Route::get('/comments', [AdminCommentController::class, 'index'])->name('comments.index');
             Route::delete('/comments/{comment}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
         });
+
+
     Route::get('lang/{locale}', function ($locale) {
         if (! in_array($locale, ['lv', 'en'])) {
             abort(400);
@@ -54,9 +62,9 @@ Route::middleware(['web', SetLocale::class])->group(function () {
         return redirect()->back();
     })->name('lang.switch');
 
+
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
     Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-
 
     require __DIR__.'/auth.php';
 });

@@ -78,4 +78,5 @@ return [
     'confirm_delete_user' => 'Vai tiešām vēlies dzēst šo lietotāju?',
     'cannot_delete_self' => 'Nevari dzēst sevi.',
     'reccomended' => 'Rekomendācijas',
+    'select_category' => 'izvēlēties kategoriju',
 ];

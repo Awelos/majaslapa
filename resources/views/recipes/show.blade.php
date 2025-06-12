@@ -1,5 +1,187 @@
 @extends('layouts.app')
 
+<style>
+.container {
+    max-width: 720px;
+    margin: 2rem auto;
+    padding: 1.5rem 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #222;
+}
+
+h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 1.2rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #2980b9;
+    padding-bottom: 0.3rem;
+}
+
+h4 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: #34495e;
+    border-left: 5px solid #2980b9;
+    padding-left: 0.75rem;
+    font-weight: 600;
+}
+
+img.img-fluid {
+    width: 100%;
+    max-height: 320px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(41, 128, 185, 0.3);
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+img.img-fluid:hover {
+    transform: scale(1.03);
+}
+
+p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: #444;
+}
+
+strong {
+    color: #2980b9;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1rem;
+}
+
+ul li {
+    display: inline-block;
+    background: #ecf0f1;
+    color: #34495e;
+    border-radius: 16px;
+    padding: 0.35rem 0.9rem;
+    margin: 0 0.4rem 0.4rem 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    user-select: none;
+    transition: background-color 0.25s ease;
+}
+
+ul li:hover {
+    background-color: #2980b9;
+    color: #fff;
+    cursor: default;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 1.5rem 0;
+}
+
+.comment-item {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.comment-item strong {
+    color: #2980b9;
+    font-weight: 700;
+}
+
+.comment-item p {
+    margin: 0.3rem 0 0.7rem;
+}
+
+.comment-item small {
+    color: #999;
+    font-size: 0.8rem;
+}
+
+a.btn-warning {
+    display: inline-block;
+    margin-bottom: 0.8rem;
+}
+
+form.d-inline button.btn-danger {
+    display: inline-block;
+}
+
+.btn-warning, .btn-danger, .btn-primary {
+    padding: 0.55rem 1.3rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    text-align: center;
+    line-height: 1.3;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-warning {
+    background-color: #f39c12;
+}
+
+.btn-warning:hover, .btn-warning:focus {
+    background-color: #d68910;
+    box-shadow: 0 6px 12px rgba(243, 156, 18, 0.5);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+}
+
+.btn-danger:hover, .btn-danger:focus {
+    background-color: #c0392b;
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.5);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background-color: #2980b9;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #21618c;
+    box-shadow: 0 6px 12px rgba(41, 128, 185, 0.5);
+    outline: none;
+    transform: translateY(-2px);
+}
+
+.btn-warning:active,
+.btn-danger:active,
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    transition: none;
+}
+
+@media (max-width: 576px) {
+    .btn-warning, .btn-danger, .btn-primary {
+        width: 100%;
+        padding: 0.65rem 0;
+    }
+}
+</style>
+
 @section('content')
 <div class="container">
     <h2>{{ $recipe->title }}</h2>

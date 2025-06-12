@@ -78,4 +78,5 @@ return [
     'confirm_delete_user' => 'Are you sure you want to delete this user?',
     'cannot_delete_self' => 'You cannot delete yourself.',
     'reccomended' => 'Reccomendations',
+    'select_category' => 'select category',
 ];

@@ -107,6 +107,17 @@ label > input[type="checkbox"] {
             <textarea name="description" required></textarea>
         </div>
 
+        <div>
+            <label>{{ __('messages.recipe_category') }}:</label>
+            <select name="category_id" required>
+                <option value="">{{ __('messages.select_category') }}</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
         <div>
             <label>{{ __('messages.recipe_tags') }}:</label><br>
