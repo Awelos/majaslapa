@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\AuditLog;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -21,40 +18,76 @@ class ProfileController extends Controller
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $original = $user->only(['name', 'email']);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $changes = [];
+
+        if ($user->name !== $validated['name']) {
+            $changes['name'] = ['old' => $user->name, 'new' => $validated['name']];
         }
 
-        $request->user()->save();
+        if ($user->email !== $validated['email']) {
+            $changes['email'] = ['old' => $user->email, 'new' => $validated['email']];
+        }
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+            $changes['password'] = ['old' => '********', 'new' => '********'];
+        }
+
+        $user->save();
+
+
+        if (!empty($changes)) {
+            AuditLog::create([
+                'user_id' => $user->id,
+                'action' => 'profile_updated',
+                'model_type' => get_class($user),
+                'model_id' => $user->id,
+                'old_values' => collect($original)->only(array_keys($changes)),
+                'new_values' => collect($user->only(array_keys($changes))),
+            ]);
+        }
+
+        return redirect()->route('profile.edit')->with('success', 'Profils veiksmīgi atjaunināts!');
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
-        $request->validateWithBag('userDeletion', [
+        $request->validate([
             'password' => ['required', 'current_password'],
         ]);
 
         $user = $request->user();
 
-        Auth::logout();
+ 
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'profile_deleted',
+            'model_type' => get_class($user),
+            'model_id' => $user->id,
+            'old_values' => $user->only(['name', 'email']),
+            'new_values' => null,
+        ]);
 
+        Auth::logout();
         $user->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return redirect('/')->with('success', 'Jūsu profils tika veiksmīgi dzēsts.');
     }
 }

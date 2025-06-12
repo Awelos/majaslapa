@@ -9,10 +9,10 @@ class TagSeeder extends Seeder
 {
     public function run(): void
     {
-        $tags = ['Vegāns', 'Bezglutēna', 'Ātri pagatavojams', 'Deserts', 'Zems kaloriju saturs'];
+        $tags = ['Vegāns', 'Bezglutēna', 'Ātri pagatavojams', 'Deserts', 'Zems kaloriju saturs', 'soup', 'comfort', 'salad'];
 
         foreach ($tags as $tagName) {
-            Tag::create(['name' => $tagName]);
+            \App\Models\Tag::firstOrCreate(['name' => $tagName]);
         }
     }
 }

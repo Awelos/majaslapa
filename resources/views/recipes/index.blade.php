@@ -1,68 +1,107 @@
-
 @extends('layouts.app')
 
-@section('content')
+@section('styles')
 <style>
-    .recipe-list {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
+    .recipe-card {
+        background-color: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    .recipe-item {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
+    .recipe-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
 
-    .recipe-item:hover {
-        transform: translateY(-2px);
-    }
-
-    .recipe-item a {
+    .recipe-card a {
+        color: #2c3e50;
+        font-size: 1.4rem;
+        font-weight: 600;
         text-decoration: none;
-        color: #333;
-        font-size: 1.2rem;
-        font-weight: bold;
     }
 
-    .recipe-item small {
+    .recipe-card a:hover {
+        color: #f39c12;
+    }
+
+    .recipe-meta {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 10px;
+    }
+
+    .recipe-meta small {
         display: block;
-        color: #777;
-        margin-top: 6px;
+    }
+
+    .recipe-image {
+        margin-top: 15px;
+    }
+
+    .recipe-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
     .add-recipe-link {
         display: inline-block;
         background-color: #28a745;
-        color: white;
-        padding: 8px 16px;
+        color: #fff;
+        padding: 10px 18px;
         border-radius: 6px;
         text-decoration: none;
-        margin-bottom: 16px;
-        transition: background-color 0.2s;
+        margin-bottom: 25px;
+        font-weight: 600;
+        transition: background-color 0.3s;
     }
 
     .add-recipe-link:hover {
         background-color: #218838;
     }
 
-    h2 {
-        margin-bottom: 20px;
+    .button-green {
+        background-color: #28a745;
+        color: #fff;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+    .button-green:hover {
+        background-color: #218838;
+    }
+
+    .tag-filter .form-check {
+        margin-bottom: 10px;
+    }
+
+    .search-section {
+        margin-bottom: 30px;
+    }
+
+    .recipe-tags span {
+        background-color: #f0f0f0;
+        padding: 4px 8px;
+        margin-right: 6px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        color: #444;
     }
 </style>
+@endsection
 
+@section('content')
 <div class="container">
-    <h2>
-        @if ($personal)
-            {{ __('messages.my_recipes') }}
-        @else
-            {{ __('messages.recipes') }}
-        @endif
+    <h2 class="mb-4">
+        {{ $personal ? __('messages.my_recipes') : __('messages.recipes') }}
     </h2>
 
     @if ($personal)
@@ -71,25 +110,81 @@
         </a>
     @endif
 
-    @if (session('success'))
-        <div style="color: green;">
-            {{ session('success') }}
+    <form method="GET" action="{{ url()->current() }}" class="row g-3 align-items-end search-section">
+        <div class="col-md-5">
+            <label for="search" class="form-label">{{ __('messages.search') }}</label>
+            <input type="text" name="search" id="search" class="form-control" placeholder="{{ __('messages.search_placeholder') }}" value="{{ request('search') }}">
         </div>
+
+        <div class="col-md-5 tag-filter">
+            <label class="form-label">{{ __('messages.filter_by_tag') }}</label>
+            <div class="d-flex flex-wrap gap-3">
+                @foreach ($availableTags as $tag)
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            name="tags[]" 
+                            value="{{ $tag->id }}"
+                            id="tag-{{ $tag->id }}"
+                            {{ in_array($tag->id, (array) request('tags', [])) ? 'checked' : '' }}
+                        >
+                        <label class="form-check-label" for="tag-{{ $tag->id }}">
+                            {{ __('tags.' . $tag->id) }}
+                        </label>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="button-green w-100">
+                {{ __('messages.search') }}
+            </button>
+        </div>
+    </form>
+
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
     @if ($recipes->isEmpty())
         <p>{{ __('messages.no_recipes') }}</p>
     @else
-        <ul class="recipe-list">
+        <ul class="list-unstyled">
             @foreach ($recipes as $recipe)
-                <li class="recipe-item">
+                <li class="recipe-card">
                     <a href="{{ route('recipes.show', $recipe) }}">
                         {{ $recipe->title }}
                     </a>
-                    <small>{{ __('messages.created_at') }}: {{ $recipe->created_at->format('Y-m-d H:i') }}</small>
+
+                    @if ($recipe->image)
+                        <div class="recipe-image">
+                            <img src="{{ asset('storage/' . $recipe->image) }}" alt="{{ $recipe->title }}">
+                        </div>
+                    @endif
+
+                    <div class="recipe-meta">
+                        <small>{{ __('messages.created_at') }}: {{ $recipe->created_at->format('Y-m-d H:i') }}</small>
+                        <small>{{ __('messages.author') }}: {{ $recipe->user->name ?? __('messages.unknown') }}</small>
+                    </div>
+
+                    @if ($recipe->tags->isNotEmpty())
+                        <div class="recipe-tags mt-2">
+                            {{ __('messages.tags') }}:
+                            @foreach ($recipe->tags as $tag)
+                                <span>{{ __('tags.' . $tag->id) }}</span>
+                            @endforeach
+                        </div>
+                    @endif
                 </li>
             @endforeach
         </ul>
+
+        <div class="mt-4">
+            {{ $recipes->withQueryString()->links() }}
+        </div>
     @endif
+
 </div>
 @endsection
