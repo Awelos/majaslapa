@@ -15,7 +15,7 @@ class RecipeController extends Controller
     use AuthorizesRequests;
 
 
-    public function index(Request $request)
+        public function index(Request $request)
     {
         $query = Recipe::where('user_id', Auth::id());
 
@@ -29,7 +29,7 @@ class RecipeController extends Controller
 
         if ($request->filled('tags')) {
             $query->whereHas('tags', function ($q) use ($request) {
-                $q->whereIn('name', $request->tags);
+                $q->whereIn('id', $request->tags);
             });
         }
 

@@ -17,4 +17,5 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
     }
+    public const HOME = '/all-recipes';
 }

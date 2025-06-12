@@ -49,7 +49,7 @@
 </style>
 
 <div class="review-container">
-    <div class="review-title">{{ __('User Reviews') }}</div>
+    <div class="review-title">{{ __('messages.user_reviews') }}</div>
 
     @foreach ($reviews as $review)
         <div class="review-box">
@@ -60,9 +60,9 @@
 
     <form method="POST" action="{{ route('reviews.store') }}">
         @csrf
-        <textarea name="content" class="form-textarea" rows="4" placeholder="{{ __('Write your review...') }}"></textarea>
+        <textarea name="content" class="form-textarea" rows="4" placeholder="{{ __('messages.write_review_placeholder') }}"></textarea>
         <button type="submit" class="form-button">
-            {{ __('Submit Review') }}
+            {{ __('messages.submit_review') }}
         </button>
     </form>
 </div>
